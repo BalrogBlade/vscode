@@ -39,12 +39,7 @@ export async function rimraf(path: string, mode = RimRafMode.UNLINK): Promise<vo
 	}
 
 	// delete: via unlink
-	if (
-		mode === RimRafMode.UNLINK ||
-		path[path.length - 1] === '.' || 	// special paths
-		endsWith(path, './') ||			 	// that cannot be
-		endsWith(path, '.\\')				// moved on Windows
-	) {
+	if (mode === RimRafMode.UNLINK) {
 		return rimrafUnlink(path);
 	}
 

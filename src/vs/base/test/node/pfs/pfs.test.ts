@@ -115,7 +115,7 @@ suite('PFS', () => {
 		await pfs.rimraf(parentDir, pfs.RimRafMode.MOVE);
 	});
 
-	test('rimraf - simple', async () => {
+	test('rimraf - simple - unlink', async () => {
 		const id = uuid.generateUuid();
 		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
 		const newDir = path.join(parentDir, 'pfs', id);
@@ -128,7 +128,20 @@ suite('PFS', () => {
 		assert.ok(!fs.existsSync(newDir));
 	});
 
-	test('rimraf - recursive folder structure', async () => {
+	test('rimraf - simple - move', async () => {
+		const id = uuid.generateUuid();
+		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
+		const newDir = path.join(parentDir, 'pfs', id);
+
+		await pfs.mkdirp(newDir, 493);
+		fs.writeFileSync(path.join(newDir, 'somefile.txt'), 'Contents');
+		fs.writeFileSync(path.join(newDir, 'someOtherFile.txt'), 'Contents');
+
+		await pfs.rimraf(newDir, pfs.RimRafMode.MOVE);
+		assert.ok(!fs.existsSync(newDir));
+	});
+
+	test('rimraf - recursive folder structure - unlink', async () => {
 		const id = uuid.generateUuid();
 		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
 		const newDir = path.join(parentDir, 'pfs', id);
@@ -140,6 +153,47 @@ suite('PFS', () => {
 		fs.writeFileSync(path.join(newDir, 'somefolder', 'somefile.txt'), 'Contents');
 
 		await pfs.rimraf(newDir);
+		assert.ok(!fs.existsSync(newDir));
+	});
+
+	test('rimraf - recursive folder structure - move', async () => {
+		const id = uuid.generateUuid();
+		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
+		const newDir = path.join(parentDir, 'pfs', id);
+
+		await pfs.mkdirp(newDir, 493);
+		fs.writeFileSync(path.join(newDir, 'somefile.txt'), 'Contents');
+		fs.writeFileSync(path.join(newDir, 'someOtherFile.txt'), 'Contents');
+		fs.mkdirSync(path.join(newDir, 'somefolder'));
+		fs.writeFileSync(path.join(newDir, 'somefolder', 'somefile.txt'), 'Contents');
+
+		await pfs.rimraf(newDir, pfs.RimRafMode.MOVE);
+		assert.ok(!fs.existsSync(newDir));
+	});
+
+	test('rimraf - simple ends with dot - move', async () => {
+		const id = `${uuid.generateUuid()}.`;
+		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
+		const newDir = path.join(parentDir, 'pfs', id);
+
+		await pfs.mkdirp(newDir, 493);
+		fs.writeFileSync(path.join(newDir, 'somefile.txt'), 'Contents');
+		fs.writeFileSync(path.join(newDir, 'someOtherFile.txt'), 'Contents');
+
+		await pfs.rimraf(newDir, pfs.RimRafMode.MOVE);
+		assert.ok(!fs.existsSync(newDir));
+	});
+
+	test('rimraf - simple ends with dot slash/backslash - move', async () => {
+		const id = `${uuid.generateUuid()}.`;
+		const parentDir = path.join(os.tmpdir(), 'vsctests', id);
+		const newDir = path.join(parentDir, 'pfs', id);
+
+		await pfs.mkdirp(newDir, 493);
+		fs.writeFileSync(path.join(newDir, 'somefile.txt'), 'Contents');
+		fs.writeFileSync(path.join(newDir, 'someOtherFile.txt'), 'Contents');
+
+		await pfs.rimraf(`${newDir}${path.sep}`, pfs.RimRafMode.MOVE);
 		assert.ok(!fs.existsSync(newDir));
 	});
 

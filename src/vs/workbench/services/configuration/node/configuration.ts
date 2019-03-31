@@ -606,9 +606,9 @@ export class NodeBasedFolderConfiguration extends AbstractFolderConfiguration {
 			};
 		}, error => {
 			if ((<any>error).code === 'ENOTDIR') {
-				Promise.resolve({ resource });
+				return Promise.resolve({ resource });
 			} else {
-				Promise.reject(error);
+				return Promise.reject(error);
 			}
 		});
 	}
